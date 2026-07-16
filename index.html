@@ -16,46 +16,50 @@
 
     <nav class="site-nav">
         <ul>
-            <li><a href="#home">Главная</a></li>
-            <li><a href="#characters">Персонажи</a></li>
-            <li><a href="#stories">Истории</a></li>
-            <li><a href="#about">Об Архиве</a></li>
+            <li><button class="nav-button active" data-target="home">Главная</button></li>
+            <li><button class="nav-button" data-target="characters">Персонажи</button></li>
+            <li><button class="nav-button" data-target="stories">Истории</button></li>
+            <li><button class="nav-button" data-target="about">Об Архиве</button></li>
         </ul>
     </nav>
 
     <main class="site-main">
-        <section id="home" class="section-intro">
-            <div class="container">
-                <h2>Добро пожаловать</h2>
-                <p>Здесь собраны данные, история и профили персонажей, созданных или исследованных мной. Этот архив служит хранилищем идей, сюжетов и миров.</p>
-            </div>
-        </section>
+        <div class="container">
+            <!-- Контейнер для динамического контента -->
+            <div id="content-container">
+                <section id="home" class="content-section active">
+                    <h2>Добро пожаловать</h2>
+                    <p>Здесь собраны данные, история и профили персонажей, созданных или исследованных мной. Этот архив служит хранилищем идей, сюжетов и миров.</p>
+                </section>
 
-        <section id="characters" class="section-content">
-            <div class="container">
-                <h2>Персонажи</h2>
-                <p>Список персонажей будет добавлен позже.</p>
-                <!-- Пример карточки персонажа -->
-                <!-- <article class="character-card">
-                    <h3>Имя Персонажа</h3>
-                    <p>Описание.</p>
-                </article> -->
-            </div>
-        </section>
+                <section id="characters" class="content-section">
+                    <h2>Персонажи</h2>
+                    <p>Список персонажей будет добавлен позже.</p>
+                    <article class="character-card">
+                        <h3>Пример Персонажа 1</h3>
+                        <p>Описание персонажа 1...</p>
+                    </article>
+                    <article class="character-card">
+                        <h3>Пример Персонажа 2</h3>
+                        <p>Описание персонажа 2...</p>
+                    </article>
+                </section>
 
-        <section id="stories" class="section-content">
-            <div class="container">
-                <h2>Истории</h2>
-                <p>Список историй будет добавлен позже.</p>
-            </div>
-        </section>
+                <section id="stories" class="content-section">
+                    <h2>Истории</h2>
+                    <p>Список историй будет добавлен позже.</p>
+                    <article class="story-card">
+                        <h3>Название Истории 1</h3>
+                        <p>Краткое содержание истории 1...</p>
+                    </article>
+                </section>
 
-        <section id="about" class="section-content">
-            <div class="container">
-                <h2>Об Архиве</h2>
-                <p>Этот сайт создан как личное пространство для хранения и демонстрации творческих проектов, связанных с персонажами и мирами, в которых они существуют.</p>
+                <section id="about" class="content-section">
+                    <h2>Об Архиве</h2>
+                    <p>Этот сайт создан как личное пространство для хранения и демонстрации творческих проектов, связанных с персонажами и мирами, в которых они существуют.</p>
+                </section>
             </div>
-        </section>
+        </div>
     </main>
 
     <footer class="site-footer">
@@ -64,9 +68,6 @@
         </div>
     </footer>
 
-    <script>
-        // Автоматическое обновление года в футере
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-    </script>
+    <script src="script.js"></script> <!-- Подключаем скрипт -->
 </body>
 </html>

@@ -1,73 +1,141 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Личный Архив | Cipher</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header class="site-header">
-        <div class="container">
-            <h1 class="site-title">Личный Архив</h1>
-            <p class="site-subtitle">Коллекция историй и профайлов персонажей</p>
-        </div>
-    </header>
+/* Обнуление и базовые настройки */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <nav class="site-nav">
-        <ul>
-            <li><button class="nav-button active" data-target="home">Главная</button></li>
-            <li><button class="nav-button" data-target="characters">Персонажи</button></li>
-            <li><button class="nav-button" data-target="stories">Истории</button></li>
-            <li><button class="nav-button" data-target="about">Об Архиве</button></li>
-        </ul>
-    </nav>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #1a1a1a; /* Темный фон */
+    color: #e0e0e0; /* Светлый текст */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-    <main class="site-main">
-        <div class="container">
-            <!-- Контейнер для динамического контента -->
-            <div id="content-container">
-                <section id="home" class="content-section active">
-                    <h2>Добро пожаловать</h2>
-                    <p>Здесь собраны данные, история и профили персонажей, созданных или исследованных мной. Этот архив служит хранилищем идей, сюжетов и миров.</p>
-                </section>
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
 
-                <section id="characters" class="content-section">
-                    <h2>Персонажи</h2>
-                    <p>Список персонажей будет добавлен позже.</p>
-                    <article class="character-card">
-                        <h3>Пример Персонажа 1</h3>
-                        <p>Описание персонажа 1...</p>
-                    </article>
-                    <article class="character-card">
-                        <h3>Пример Персонажа 2</h3>
-                        <p>Описание персонажа 2...</p>
-                    </article>
-                </section>
+/* Шапка */
+.site-header {
+    background-color: #2c2c2c;
+    padding: 2rem 0;
+    text-align: center;
+    border-bottom: 2px solid #444;
+}
 
-                <section id="stories" class="content-section">
-                    <h2>Истории</h2>
-                    <p>Список историй будет добавлен позже.</p>
-                    <article class="story-card">
-                        <h3>Название Истории 1</h3>
-                        <p>Краткое содержание истории 1...</p>
-                    </article>
-                </section>
+.site-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #bb86fc; /* Цвет похож на тему Material Design, можно изменить */
+}
 
-                <section id="about" class="content-section">
-                    <h2>Об Архиве</h2>
-                    <p>Этот сайт создан как личное пространство для хранения и демонстрации творческих проектов, связанных с персонажами и мирами, в которых они существуют.</p>
-                </section>
-            </div>
-        </div>
-    </main>
+.site-subtitle {
+    font-style: italic;
+    color: #aaa;
+}
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; <span id="currentYear"></span> Cipher. Все права защищены.</p>
-        </div>
-    </footer>
+/* Навигация */
+.site-nav {
+    background-color: #333;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #444;
+}
 
-    <script src="script.js"></script> <!-- Подключаем скрипт -->
-</body>
-</html>
+.site-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.nav-button { /* Изменили селектор на кнопку */
+    background-color: transparent;
+    color: #e0e0e0;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-decoration: none; /* На случай, если кто-то решит сделать это ссылкой */
+    font-size: inherit;
+}
+
+.nav-button:hover {
+    background-color: #444;
+}
+
+.nav-button.active { /* Стиль активной кнопки */
+    background-color: #bb86fc;
+    color: #1a1a1a;
+}
+
+/* Основной контент */
+.site-main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+#content-container {
+    position: relative; /* Для правильной работы анимации */
+    min-height: 400px; /* Минимальная высота для плавности */
+}
+
+.content-section {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px); /* Начальное положение чуть ниже */
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Анимация */
+    padding: 1rem 0;
+}
+
+.content-section.active {
+    display: block; /* Показываем активный раздел */
+    opacity: 1;
+    transform: translateY(0); /* Конечное положение */
+}
+
+.section-intro h2,
+.section-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #bb86fc;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.5rem;
+}
+
+.section-intro p,
+.section-content p {
+    margin-bottom: 1rem;
+}
+
+.character-card,
+.story-card {
+    background-color: #2c2c2c;
+    border-left: 4px solid #bb86fc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.character-card h3,
+.story-card h3 {
+    color: #bb86fc;
+}
+
+/* Футер */
+.site-footer {
+    background-color: #2c2c2c;
+    padding: 1.5rem 0;
+    text-align: center;
+    border-top: 2px solid #444;
+    margin-top: auto; /* Прижимает футер к низу */
+}
+
+.site-footer p {
+    color: #aaa;
+}

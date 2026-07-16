@@ -6,7 +6,7 @@
 <title>QUENT_ARCHIVE // SYSTEM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
 <header class="topbar">
   <div class="topbar-left">
     <span class="brand-mark">◆</span>
-    <span class="brand-text">QUENT<span class="accent-cyan">_</span>ARCHIVE</span>
+    <span class="brand-text">QUENT<span class="accent-green">_</span>ARCHIVE</span>
     <span class="brand-sub">// PERSONAL DATA CORE</span>
   </div>
 
@@ -58,7 +58,7 @@
       <div class="home-side-left">
         <div class="readout">
           <span class="readout-label">UNITS_STORED</span>
-          <span class="readout-value">002</span>
+          <span class="readout-value" id="stat-units">002</span>
         </div>
         <div class="readout">
           <span class="readout-label">ACCESS_LEVEL</span>
@@ -75,8 +75,8 @@
 
       <div class="home-center">
         <p class="eyebrow"><span class="eyebrow-bracket">[</span>ID // 0x00_WELCOME<span class="eyebrow-bracket">]</span></p>
-        <h1 class="hero-title" data-glitch="АРХИВ КВЕНТ">
-          <span>АРХИВ</span><span class="accent-magenta">КВЕНТ</span>
+        <h1 class="hero-title">
+          <span>АРХИВ</span><span class="accent-green">КВЕНТ</span>
         </h1>
         <p class="hero-sub">
           Личное хранилище персонажей: биографии, снаряжение, статус и заметки —
@@ -111,12 +111,8 @@
       </div>
 
       <div class="home-side-right">
-        <div class="scan-portrait">
-          <div class="scan-portrait-inner">
-            <span class="scan-line"></span>
-          </div>
-          <span class="scan-caption">SCANNING_ARCHIVE...</span>
-        </div>
+        <canvas id="matrix-rain" class="matrix-rain"></canvas>
+        <span class="rain-caption">SIGNAL // LIVE</span>
       </div>
 
     </div>
@@ -135,70 +131,88 @@
     <div class="archive-head">
       <p class="eyebrow"><span class="eyebrow-bracket">[</span>ID // 0x01_ROSTER<span class="eyebrow-bracket">]</span></p>
       <h2 class="section-title">РЕЕСТР ПЕРСОНАЖЕЙ</h2>
-      <p class="section-sub">Нажмите на карточку юнита, чтобы открыть досье (заполняется отдельно).</p>
+      <p class="section-sub">Нажмите «ДОСЬЕ» на карточке, чтобы открыть и отредактировать полный профиль юнита.</p>
     </div>
 
-    <div class="card-grid">
+    <div class="card-grid" id="card-grid">
+      <!-- карточки рендерятся через script.js на основе данных из localStorage -->
+    </div>
+  </section>
 
-      <!-- CHARACTER CARD TEMPLATE 01 (пустой шаблон) -->
-      <article class="char-card">
-        <div class="char-photo">
-          <span class="char-photo-id">UNIT_01</span>
-          <span class="char-photo-placeholder">＋</span>
-        </div>
-        <div class="char-body">
-          <p class="char-status"><span class="dot dot-active"></span>СТАТУС: АКТИВЕН</p>
-          <h3 class="char-name">ИМЯ_ФАМИЛИЯ</h3>
-          <p class="char-role">РОЛЬ / АРХЕТИП — заполнить</p>
-          <p class="char-desc">Короткая квента персонажа появится здесь: пара строк о происхождении, характере и цели.</p>
-          <button class="btn-ghost">ДОСЬЕ <span class="btn-arrow">›</span></button>
-        </div>
-      </article>
+  <!-- ---------- PAGE: DOSSIER ---------- -->
+  <section class="page" id="page-dossier" data-page>
 
-      <!-- CHARACTER CARD TEMPLATE 02 (пустой шаблон) -->
-      <article class="char-card">
-        <div class="char-photo">
-          <span class="char-photo-id">UNIT_02</span>
-          <span class="char-photo-placeholder">＋</span>
-        </div>
-        <div class="char-body">
-          <p class="char-status"><span class="dot dot-idle"></span>СТАТУС: НЕИЗВЕСТЕН</p>
-          <h3 class="char-name">ИМЯ_ФАМИЛИЯ</h3>
-          <p class="char-role">РОЛЬ / АРХЕТИП — заполнить</p>
-          <p class="char-desc">Короткая квента персонажа появится здесь: пара строк о происхождении, характере и цели.</p>
-          <button class="btn-ghost">ДОСЬЕ <span class="btn-arrow">›</span></button>
-        </div>
-      </article>
+    <div class="page-frame">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
+    </div>
 
-      <!-- CHARACTER CARD TEMPLATE 03 (пустой шаблон) -->
-      <article class="char-card">
-        <div class="char-photo">
-          <span class="char-photo-id">UNIT_03</span>
-          <span class="char-photo-placeholder">＋</span>
-        </div>
-        <div class="char-body">
-          <p class="char-status"><span class="dot dot-offline"></span>СТАТУС: АРХИВИРОВАН</p>
-          <h3 class="char-name">ИМЯ_ФАМИЛИЯ</h3>
-          <p class="char-role">РОЛЬ / АРХЕТИП — заполнить</p>
-          <p class="char-desc">Короткая квента персонажа появится здесь: пара строк о происхождении, характере и цели.</p>
-          <button class="btn-ghost">ДОСЬЕ <span class="btn-arrow">›</span></button>
-        </div>
-      </article>
+    <div class="dossier-head">
+      <button class="btn-ghost btn-back" data-target="page-archive">‹ НАЗАД В АРХИВ</button>
+      <p class="eyebrow"><span class="eyebrow-bracket">[</span>ID // 0x02_DOSSIER<span class="eyebrow-bracket">]</span></p>
+    </div>
 
-      <!-- ADD NEW SLOT -->
-      <article class="char-card char-card--add">
-        <span class="add-icon">＋</span>
-        <span class="add-text">ДОБАВИТЬ ЮНИТА</span>
-        <span class="add-hint">новая карточка в архиве.html / index.html</span>
-      </article>
+    <div class="dossier-grid">
 
+      <div class="dossier-photo-col">
+        <div class="char-photo dossier-photo" id="dossier-photo"></div>
+        <label class="field-label" for="field-photo">URL ФОТОГРАФИИ</label>
+        <input type="text" id="field-photo" class="input-line" placeholder="https://.../photo.jpg">
+      </div>
+
+      <div class="dossier-fields-col">
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="field-name">ИМЯ И ФАМИЛИЯ</label>
+            <input type="text" id="field-name" class="input-line" placeholder="Имя Фамилия">
+          </div>
+          <div class="field field-narrow">
+            <label class="field-label" for="field-status">СТАТУС</label>
+            <select id="field-status" class="input-line">
+              <option value="active">АКТИВЕН</option>
+              <option value="idle">НЕИЗВЕСТЕН</option>
+              <option value="archived">АРХИВИРОВАН</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="field-role">РОЛЬ / АРХЕТИП</label>
+          <input type="text" id="field-role" class="input-line" placeholder="Наёмник, хакер, медик...">
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="field-desc">КРАТКОЕ ОПИСАНИЕ <span class="field-hint">(для карточки в архиве)</span></label>
+          <textarea id="field-desc" class="input-area" rows="2" placeholder="Пара строк о персонаже"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="field-bio">КВЕНТА</label>
+          <textarea id="field-bio" class="input-area" rows="7" placeholder="Полная предыстория персонажа..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="field-equipment">СНАРЯЖЕНИЕ <span class="field-hint">(по одному пункту на строку)</span></label>
+          <textarea id="field-equipment" class="input-area" rows="4" placeholder="HEADSET :: KUROSAWA_GOGGLES&#10;WEAPON :: KOWA_TYPE_89&#10;NEURO_IMPLANT :: SHADOW_STEP"></textarea>
+        </div>
+
+        <div class="dossier-actions">
+          <button class="btn-primary" id="btn-save">СОХРАНИТЬ <span class="btn-arrow">›</span></button>
+          <button class="btn-danger" id="btn-delete">УДАЛИТЬ ЮНИТА</button>
+          <span class="save-toast" id="save-toast">ИЗМЕНЕНИЯ СОХРАНЕНЫ</span>
+        </div>
+
+      </div>
     </div>
   </section>
 
 </main>
 
 <footer class="footer">
-  <span>QUENT_ARCHIVE v0.1</span>
+  <span>QUENT_ARCHIVE v0.2</span>
   <span class="footer-dim">SELF_HOSTED // GITHUB PAGES</span>
 </footer>
 

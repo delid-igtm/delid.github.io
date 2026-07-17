@@ -55,10 +55,15 @@
   );
 
   const STATUS_MAP = {
-    active:   { label: 'АКТИВЕН',      dot: 'dot-active' },
-    idle:     { label: 'НЕИЗВЕСТЕН',   dot: 'dot-idle' },
-    archived: { label: 'АРХИВИРОВАН',  dot: 'dot-archived' }
+    active:   { label: 'АКТИВЕН',      color: '#00ff6a', glow: 'rgba(0,255,106,0.22)' },
+    archived: { label: 'АРХИВИРОВАН',  color: '#ffcf3f', glow: 'rgba(255,207,63,0.22)' },
+    dead:     { label: 'УБИТ',         color: '#ff2b3d', glow: 'rgba(255,43,61,0.22)' }
   };
+  function statusTheme(status){ return STATUS_MAP[status] || STATUS_MAP.active; }
+  function statusStyleAttr(status){
+    const t = statusTheme(status);
+    return `--status-color:${t.color};--status-glow:${t.glow};`;
+  }
 
   function demoCharacter(){
     const fields = blankFields();
@@ -73,8 +78,8 @@
   function DEFAULT_CHARACTERS(){
     return [
       demoCharacter(),
-      { id: 'unit-02', photo: '', status: 'idle',     fields: blankFields(), relations: [] },
-      { id: 'unit-03', photo: '', status: 'archived', fields: blankFields(), relations: [] }
+      { id: 'unit-02', photo: '', status: 'archived', fields: blankFields(), relations: [] },
+      { id: 'unit-03', photo: '', status: 'dead',      fields: blankFields(), relations: [] }
     ];
   }
 
@@ -91,7 +96,7 @@
     return {
       id: old.id || uid('unit'),
       photo: old.photo || '',
-      status: old.status || 'idle',
+      status: old.status === 'idle' ? 'archived' : (old.status || 'active'),
       fields,
       relations: []
     };
@@ -165,13 +170,14 @@
     grid.innerHTML = '';
 
     characters.forEach((char, idx) => {
-      const st = STATUS_MAP[char.status] || STATUS_MAP.idle;
+      const st = statusTheme(char.status);
       const card = document.createElement('article');
       card.className = 'char-card';
+      card.setAttribute('style', statusStyleAttr(char.status));
       card.innerHTML = `
         <div class="char-photo">${photoBlockHtml(char, idx)}</div>
         <div class="char-body">
-          <p class="char-status"><span class="dot ${st.dot}"></span>СТАТУС: ${st.label}</p>
+          <p class="char-status"><span class="dot"></span>СТАТУС: ${st.label}</p>
           <h3 class="char-name">${escapeHtml(cardName(char))}</h3>
           <p class="char-role">${escapeHtml(cardSubtitle(char)) || 'РОЛЬ / ПРОЗВИЩЕ — заполнить'}</p>
           <p class="char-desc">${escapeHtml(cardSnippet(char))}</p>
@@ -242,6 +248,26 @@
     `;
   }
 
+  // ---------------------------------------------------------
+  // "ПАЗЛ": подбор числа колонок по объёму текста в пунктах.
+  // Сама раскладка блоков внутри колонок — родной алгоритм
+  // балансировки CSS multi-column (он сам решает, что куда
+  // складывать по высоте контента); мы лишь подсказываем,
+  // сколько колонок разумно для текущего объёма и ширины.
+  // ---------------------------------------------------------
+  function applyFieldColumns(container, fields){
+    if (!container) return;
+    const totalChars = fields.reduce((sum, f) => sum + (f.title || '').length + (f.value || '').length, 0);
+    const avgChars = fields.length ? totalChars / fields.length : 0;
+
+    let cols = 3;                 // много компактных пунктов — плотная раскладка
+    if (avgChars > 260) cols = 2; // в среднем длинные пункты — даём им больше воздуха
+    if (fields.length <= 2) cols = 1; // слишком мало пунктов — колонки будут смотреться дырами
+
+    cols = Math.min(cols, Math.max(1, fields.length));
+    container.style.setProperty('--field-cols', cols);
+  }
+
   function renderFieldsList(fields){
     if (!fieldsList) return;
     fieldsList.innerHTML = fields.map(fieldRowHtml).join('');
@@ -281,9 +307,13 @@
       const next = row.nextElementSibling;
       if (next) fieldsList.insertBefore(next, row);
     }
+    applyFieldColumns(fieldsList, readFieldsFromDom());
   });
 
-  btnAddField?.addEventListener('click', () => addFieldRow('НОВЫЙ ПУНКТ', ''));
+  btnAddField?.addEventListener('click', () => {
+    addFieldRow('НОВЫЙ ПУНКТ', '');
+    applyFieldColumns(fieldsList, readFieldsFromDom());
+  });
 
   function readFieldsFromDom(){
     if (!fieldsList) return [];
@@ -371,22 +401,33 @@
   // ---------------------------------------------------------
   // DOSSIER — OPEN / SAVE / DELETE / NEW
   // ---------------------------------------------------------
+  const pageDossierEl = document.getElementById('page-dossier');
+
+  function applyDossierStatusTheme(status){
+    if (pageDossierEl) pageDossierEl.setAttribute('style', statusStyleAttr(status));
+  }
+
   function openDossier(id){
     currentEditId = id;
     const char = findCharacter(id);
     if (!char) return;
 
     if (fieldPhoto) fieldPhoto.value = char.photo || '';
-    if (fieldStatus) fieldStatus.value = char.status || 'idle';
+    if (fieldStatus) fieldStatus.value = char.status || 'active';
+    applyDossierStatusTheme(char.status || 'active');
     updateDossierPhotoPreview();
-    renderFieldsList(char.fields && char.fields.length ? char.fields : blankFields());
+    const fieldsToRender = char.fields && char.fields.length ? char.fields : blankFields();
+    renderFieldsList(fieldsToRender);
+    applyFieldColumns(fieldsList, fieldsToRender);
     renderRelationsGrid(char.relations || []);
     saveToast?.classList.remove('show');
   }
 
+  fieldStatus?.addEventListener('change', () => applyDossierStatusTheme(fieldStatus.value));
+
   function createNewCharacter(){
     const id = uid('unit');
-    characters.push({ id, photo: '', status: 'idle', fields: blankFields(), relations: [] });
+    characters.push({ id, photo: '', status: 'active', fields: blankFields(), relations: [] });
     saveCharacters();
     renderArchive();
     return id;
@@ -434,25 +475,59 @@
 
   // ---------------------------------------------------------
   // READ-ONLY SHARE LINK
+  //
+  // Ссылка должна пережить копипаст в мессенджеры/SMS/почту,
+  // поэтому: 1) данные сжимаются (LZString), 2) используется
+  // URL-safe алфавит без "+ / =", которые мобильные клиенты
+  // любят портить при пересылке, 3) в пейлоад попадают только
+  // заполненные пункты и только нужные поля (без id, без пустых
+  // значений) — это резко сокращает длину.
   // ---------------------------------------------------------
-  function b64EncodeUnicode(str){
-    return btoa(unescape(encodeURIComponent(str)));
+  function packCharacter(char){
+    return {
+      p: char.photo || '',
+      s: char.status || 'active',
+      f: (char.fields || [])
+        .filter(f => f.value && f.value.trim())
+        .map(f => [f.title, f.value]),
+      r: (char.relations || [])
+        .filter(r => (r.name && r.name.trim()) || (r.quote && r.quote.trim()))
+        .map(r => [r.name || '', r.photo || '', r.type || 'unknown', r.quote || ''])
+    };
   }
-  function b64DecodeUnicode(str){
-    return decodeURIComponent(escape(atob(str)));
+
+  function unpackCharacter(packed){
+    return {
+      photo: packed.p || '',
+      status: packed.s || 'active',
+      fields: (packed.f || []).map(([title, value]) => ({ id: uid('f'), title, value })),
+      relations: (packed.r || []).map(([name, photo, type, quote]) => ({ id: uid('rel'), name, photo, type, quote }))
+    };
   }
 
   function buildReadLink(char){
-    const payload = { v: 2, c: char };
-    const encoded = b64EncodeUnicode(JSON.stringify(payload));
+    const json = JSON.stringify({ v: 3, c: packCharacter(char) });
+    const encoded = window.LZString
+      ? LZString.compressToEncodedURIComponent(json)
+      : encodeURIComponent(btoa(unescape(encodeURIComponent(json)))); // фолбэк, если LZString не подгрузился
     return location.origin + location.pathname + '#read=' + encoded;
   }
 
   function decodeReadLink(hash){
     const encoded = hash.replace(/^read=/, '');
-    const json = b64DecodeUnicode(decodeURIComponent(encoded));
+    let json = null;
+
+    if (window.LZString) {
+      json = LZString.decompressFromEncodedURIComponent(encoded);
+    }
+    if (!json) {
+      // LZString недоступен (например, CDN не загрузился), либо это
+      // ссылка, закодированная фолбэком/старой версией — пробуем base64
+      json = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
+    }
+
     const payload = JSON.parse(json);
-    return payload.c;
+    return payload.v >= 3 ? unpackCharacter(payload.c) : payload.c;
   }
 
   btnCopyLink?.addEventListener('click', async () => {
@@ -499,10 +574,11 @@
     const content = document.getElementById('read-content');
     if (!content) return;
 
-    const st = STATUS_MAP[char.status] || STATUS_MAP.idle;
+    const st = statusTheme(char.status);
     const fields = (char.fields || []).filter(f => f.value && f.value.trim());
     const relations = char.relations || [];
 
+    content.setAttribute('style', statusStyleAttr(char.status));
     content.innerHTML = `
       <p class="eyebrow"><span class="eyebrow-bracket">[</span>ID // 0x03_READ_ONLY<span class="eyebrow-bracket">]</span></p>
 
@@ -510,7 +586,7 @@
         <div class="read-photo">${photoPreviewHtmlStatic(char.photo)}</div>
         <div class="read-meta">
           <h1 class="read-name">${escapeHtml(cardName(char))}</h1>
-          <p class="read-status"><span class="dot ${st.dot}"></span>СТАТУС: ${st.label}</p>
+          <p class="read-status"><span class="dot"></span>СТАТУС: ${st.label}</p>
           ${cardSubtitle(char) ? `<span class="read-badge">${escapeHtml(cardSubtitle(char))}</span>` : ''}
         </div>
       </div>
@@ -532,6 +608,8 @@
         </div>
       </div>
     `;
+
+    applyFieldColumns(content.querySelector('.read-fields'), fields);
   }
 
   function photoPreviewHtmlStatic(url){

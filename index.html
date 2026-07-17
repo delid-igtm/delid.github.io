@@ -139,7 +139,7 @@
     </div>
   </section>
 
-  <!-- ---------- PAGE: DOSSIER ---------- -->
+  <!-- ---------- PAGE: DOSSIER (редактирование) ---------- -->
   <section class="page" id="page-dossier" data-page>
 
     <div class="page-frame">
@@ -160,52 +160,63 @@
         <div class="char-photo dossier-photo" id="dossier-photo"></div>
         <label class="field-label" for="field-photo">URL ФОТОГРАФИИ</label>
         <input type="text" id="field-photo" class="input-line" placeholder="https://.../photo.jpg">
+
+        <label class="field-label" for="field-status">СТАТУС ЮНИТА</label>
+        <select id="field-status" class="input-line">
+          <option value="active">АКТИВЕН</option>
+          <option value="idle">НЕИЗВЕСТЕН</option>
+          <option value="archived">АРХИВИРОВАН</option>
+        </select>
       </div>
 
       <div class="dossier-fields-col">
 
-        <div class="field-row">
-          <div class="field">
-            <label class="field-label" for="field-name">ИМЯ И ФАМИЛИЯ</label>
-            <input type="text" id="field-name" class="input-line" placeholder="Имя Фамилия">
-          </div>
-          <div class="field field-narrow">
-            <label class="field-label" for="field-status">СТАТУС</label>
-            <select id="field-status" class="input-line">
-              <option value="active">АКТИВЕН</option>
-              <option value="idle">НЕИЗВЕСТЕН</option>
-              <option value="archived">АРХИВИРОВАН</option>
-            </select>
-          </div>
+        <p class="field-label fields-list-label">ПУНКТЫ ДОСЬЕ <span class="field-hint">(можно переименовывать, удалять и добавлять свои)</span></p>
+
+        <div class="fields-list" id="fields-list">
+          <!-- пункты досье рендерятся через script.js -->
         </div>
 
-        <div class="field">
-          <label class="field-label" for="field-role">РОЛЬ / АРХЕТИП</label>
-          <input type="text" id="field-role" class="input-line" placeholder="Наёмник, хакер, медик...">
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="field-desc">КРАТКОЕ ОПИСАНИЕ <span class="field-hint">(для карточки в архиве)</span></label>
-          <textarea id="field-desc" class="input-area" rows="2" placeholder="Пара строк о персонаже"></textarea>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="field-bio">КВЕНТА</label>
-          <textarea id="field-bio" class="input-area" rows="7" placeholder="Полная предыстория персонажа..."></textarea>
-        </div>
-
-        <div class="field">
-          <label class="field-label" for="field-equipment">СНАРЯЖЕНИЕ <span class="field-hint">(по одному пункту на строку)</span></label>
-          <textarea id="field-equipment" class="input-area" rows="4" placeholder="HEADSET :: KUROSAWA_GOGGLES&#10;WEAPON :: KOWA_TYPE_89&#10;NEURO_IMPLANT :: SHADOW_STEP"></textarea>
-        </div>
+        <button class="btn-ghost btn-add-field" id="btn-add-field">＋ ДОБАВИТЬ ПУНКТ</button>
 
         <div class="dossier-actions">
           <button class="btn-primary" id="btn-save">СОХРАНИТЬ <span class="btn-arrow">›</span></button>
+          <button class="btn-ghost" id="btn-copy-link">СКОПИРОВАТЬ ССЫЛКУ ДЛЯ ЧТЕНИЯ</button>
           <button class="btn-danger" id="btn-delete">УДАЛИТЬ ЮНИТА</button>
           <span class="save-toast" id="save-toast">ИЗМЕНЕНИЯ СОХРАНЕНЫ</span>
         </div>
 
       </div>
+    </div>
+
+    <!-- ---------- СОЦИАЛЬНЫЕ ОТНОШЕНИЯ (редактирование, доступно скроллом вниз) ---------- -->
+    <div class="relations-section">
+      <div class="relations-banner">СОЦИАЛЬНЫЕ ОТНОШЕНИЯ</div>
+
+      <div class="relations-legend" id="relations-legend">
+        <!-- легенда рендерится через script.js -->
+      </div>
+
+      <div class="relations-grid" id="relations-grid">
+        <!-- карточки отношений рендерятся через script.js -->
+      </div>
+
+      <button class="btn-ghost btn-add-field" id="btn-add-relation">＋ ДОБАВИТЬ ОТНОШЕНИЕ</button>
+    </div>
+  </section>
+
+  <!-- ---------- PAGE: READ (только для чтения, по ссылке) ---------- -->
+  <section class="page page-read" id="page-read" data-page>
+
+    <div class="page-frame">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
+    </div>
+
+    <div id="read-content">
+      <!-- содержимое рендерится через script.js -->
     </div>
   </section>
 
